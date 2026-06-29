@@ -421,3 +421,22 @@ Unknown fields → `422`. Non-admin → `403`. **`200`** → the updated setting
 
 > **Shipping values** set here take effect on the **next** order; existing orders
 > keep their snapshotted `subtotal`/`shippingFee`/`total`.
+
+---
+
+## Wishlist
+
+Per-user saved products. All routes require an authenticated **customer** (User)
+token — admin tokens are rejected with `403` (admins are not User rows).
+
+### `GET /api/wishlist` — customer only
+Returns the current user's wishlisted products (each with `brand`, the first
+`images` entry, and `variants` for price display — same shape as the catalog).
+**`200`** → `data: Product[]`.
+
+### `POST /api/wishlist` — customer only
+**Body:** `{ "productId": "..." }`. Idempotent — adding an already-wishlisted
+product is a no-op. Unknown `productId` → `422`. **`201`** → the added product.
+
+### `DELETE /api/wishlist/:productId` — customer only
+Removes the product from the wishlist (no-op if absent). **`200`** → `data: null`.

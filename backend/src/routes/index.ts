@@ -5,6 +5,7 @@ import categoryRoutes from './category.routes';
 import productRoutes from './product.routes';
 import orderRoutes from './order.routes';
 import settingsRoutes from './settings.routes';
+import wishlistRoutes from './wishlist.routes';
 
 /**
  * Aggregates all feature route modules under the /api prefix.
@@ -18,5 +19,6 @@ router.use('/categories', categoryRoutes);
 router.use('/products', productRoutes);
 router.use('/orders', orderRoutes);
 router.use('/settings', settingsRoutes);
+router.use('/wishlist', wishlistRoutes);
 
 export default router;

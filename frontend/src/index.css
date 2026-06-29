@@ -1,0 +1,16 @@
+@import 'tailwindcss';
+
+/* Phase 4 foundation: Tailwind only. The premium design system (theme tokens,
+   fonts) lands in Phase 7. Keep base styles minimal and unopinionated here. */
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
