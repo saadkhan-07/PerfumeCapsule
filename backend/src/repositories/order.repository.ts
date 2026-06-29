@@ -23,6 +23,14 @@ export const orderRepository = {
       orderBy: { createdAt: 'desc' },
     }),
 
+  /** A single customer's own orders, newest first. */
+  findByUserId: (userId: string) =>
+    prisma.order.findMany({
+      where: { userId },
+      include: { items: true },
+      orderBy: { createdAt: 'desc' },
+    }),
+
   findById: (id: string) =>
     prisma.order.findUnique({ where: { id }, include: { items: true, user: userSelect } }),
 

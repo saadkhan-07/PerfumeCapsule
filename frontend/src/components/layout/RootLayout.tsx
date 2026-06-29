@@ -8,7 +8,7 @@ import { Footer } from './Footer'
  */
 export function RootLayout() {
   return (
-    <div className="flex min-h-screen flex-col bg-neutral-50 text-neutral-900">
+    <div className="flex min-h-screen flex-col overflow-x-hidden bg-neutral-50 text-neutral-900">
       <Navbar />
       <main className="flex-1">
         <Outlet />

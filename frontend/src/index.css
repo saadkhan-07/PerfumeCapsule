@@ -9,6 +9,12 @@ body,
   min-height: 100%;
 }
 
+/* Prevent off-screen drawers from being revealed by horizontal swipe/scroll. */
+html,
+body {
+  overflow-x: hidden;
+}
+
 body {
   margin: 0;
   -webkit-font-smoothing: antialiased;

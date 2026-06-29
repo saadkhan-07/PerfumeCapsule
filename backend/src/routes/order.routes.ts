@@ -16,6 +16,9 @@ router.post('/', requireAuth, validate(createOrderSchema), orderController.creat
 // Admin: list every order, newest first.
 router.get('/', requireAuth, requireAdmin, orderController.listOrders);
 
+// Current user's own orders. Declared BEFORE '/:id' so "mine" isn't read as an id.
+router.get('/mine', requireAuth, orderController.listMyOrders);
+
 // Admin or the order's owner — ownership enforced in the service.
 router.get('/:id', requireAuth, validate(orderIdParam), orderController.getOrder);
 

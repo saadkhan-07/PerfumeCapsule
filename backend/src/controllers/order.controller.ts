@@ -14,6 +14,12 @@ export const listOrders = asyncHandler(async (_req, res) => {
   sendSuccess(res, 200, 'Orders retrieved', orders);
 });
 
+export const listMyOrders = asyncHandler(async (req, res) => {
+  if (!req.auth) throw ApiError.unauthorized('Authentication required');
+  const orders = await orderService.listMine(req.auth);
+  sendSuccess(res, 200, 'Your orders retrieved', orders);
+});
+
 export const getOrder = asyncHandler(async (req, res) => {
   if (!req.auth) throw ApiError.unauthorized('Authentication required');
   const order = await orderService.getById(req.params.id as string, req.auth);

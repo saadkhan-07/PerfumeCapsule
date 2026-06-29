@@ -353,6 +353,11 @@ unowned (guest-style) order.
 All orders, newest first, each including `items` and a non-sensitive `user`
 (`{ id, name, email, phone }` — never the password). **`200`**.
 
+### `GET /api/orders/mine` — authenticated (customer)
+The current user's own orders, newest first, each including `items`. Scoped to the
+token's user id, so a customer only ever sees their own orders. Declared before
+`/:id` so "mine" is not parsed as an order id. **`200`** → `data: Order[]`.
+
 ### `GET /api/orders/:id` — admin OR the order's owner
 Returns the full order (`items` + `user`). A non-owner customer → `403`; unknown
 id → `404`. **`200`** otherwise.

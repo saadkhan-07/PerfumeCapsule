@@ -86,6 +86,11 @@ export const orderService = {
     return orderRepository.findAll();
   },
 
+  /** The authenticated customer's own orders, newest first. */
+  listMine(auth: AuthContext) {
+    return orderRepository.findByUserId(auth.id);
+  },
+
   /** Admin or the order's owner may view a single order. */
   async getById(id: string, auth: AuthContext) {
     const order = await orderRepository.findById(id);

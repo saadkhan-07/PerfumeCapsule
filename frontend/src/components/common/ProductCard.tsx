@@ -1,74 +1,44 @@
-import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import type { Product } from '../../types'
 import { priceRange, isInStock } from '../../utils/format'
-import { useCartStore } from '../../store/cartStore'
-import { Button } from '../ui/Button'
+import { cn } from '../../utils/cn'
+import { ImageIcon } from '../ui/icons'
+import { WishlistButton } from './WishlistButton'
 
 /**
- * Catalog card: first image, brand, name, price range, and a quick add-to-cart
- * that carts the cheapest in-stock variant (full size selection lives on the
- * product detail page).
+ * Borderless, typography-led catalog card. The whole card is a link to the
+ * product detail page; the product photo is the hero (object-contain, 3:4).
  */
 export function ProductCard({ product }: { product: Product }) {
-  const addItem = useCartStore((s) => s.addItem)
-  const [added, setAdded] = useState(false)
-
   const image = product.images?.[0]?.url
   const inStock = isInStock(product.variants)
-  const firstAvailable = product.variants?.find((v) => v.stock > 0)
-
-  const handleAdd = () => {
-    if (!firstAvailable) return
-    addItem(product, firstAvailable, 1)
-    setAdded(true)
-    setTimeout(() => setAdded(false), 1200)
-  }
 
   return (
-    <div className="group flex flex-col overflow-hidden rounded-xl border border-neutral-200 bg-white transition-shadow hover:shadow-md">
-      <Link
-        to={`/shop/${product.id}`}
-        className="relative block aspect-square overflow-hidden bg-neutral-100"
-      >
+    <Link to={`/shop/${product.id}`} className="group block">
+      <div className="relative aspect-[3/4] overflow-hidden bg-white">
+        <WishlistButton productId={product.id} />
         {image ? (
           <img
             src={image}
             alt={product.name}
             loading="lazy"
-            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+            className="h-full w-full object-contain transition-transform duration-[400ms] ease-out group-hover:scale-[1.03]"
           />
         ) : (
-          <div className="flex h-full items-center justify-center text-sm text-neutral-300">
-            No image
+          <div className="flex h-full items-center justify-center text-neutral-200">
+            <ImageIcon className="h-14 w-14" />
           </div>
         )}
-      </Link>
+      </div>
 
-      <div className="flex flex-1 flex-col p-4">
-        <p className="text-xs uppercase tracking-wide text-neutral-400">{product.brand?.name}</p>
-        <Link
-          to={`/shop/${product.id}`}
-          className="mt-1 line-clamp-2 text-sm font-medium text-neutral-900 hover:underline"
-        >
-          {product.name}
-        </Link>
-        <p className="mt-2 text-sm font-semibold text-neutral-900">
+      <div className="mt-3">
+        <p className="text-xs uppercase tracking-wider text-neutral-400">{product.brand?.name}</p>
+        <p className="mt-1 truncate text-sm font-medium text-neutral-900">{product.name}</p>
+        <p className={cn('mt-1 text-sm', inStock ? 'text-neutral-900' : 'text-neutral-400')}>
           {priceRange(product.variants)}
         </p>
-
-        <div className="mt-3 flex-1" />
-
-        <Button
-          size="sm"
-          fullWidth
-          variant={inStock ? 'primary' : 'secondary'}
-          disabled={!inStock}
-          onClick={handleAdd}
-        >
-          {!inStock ? 'Out of stock' : added ? 'Added ✓' : 'Add to cart'}
-        </Button>
+        {!inStock && <p className="mt-0.5 text-xs text-red-600">Out of stock</p>}
       </div>
-    </div>
+    </Link>
   )
 }
