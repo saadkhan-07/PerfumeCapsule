@@ -7,6 +7,7 @@ const NAV = [
   { to: '/admin/categories', label: 'Categories', end: false },
   { to: '/admin/products', label: 'Products', end: false },
   { to: '/admin/orders', label: 'Orders', end: false },
+  { to: '/admin/settings', label: 'Settings', end: false },
 ]
 
 /** Admin shell: sidebar nav (left on desktop, horizontal scroll on mobile) + outlet. */

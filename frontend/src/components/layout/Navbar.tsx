@@ -6,6 +6,7 @@ import { useBodyScrollLock } from '../../hooks/useBodyScrollLock'
 import { cn } from '../../utils/cn'
 import { BagIcon, CloseIcon } from '../ui/icons'
 import { UserMenu } from './UserMenu'
+import logo from '../../assets/Logo.png'
 
 const desktopLinkClass = ({ isActive }: { isActive: boolean }) =>
   `text-sm font-medium transition-colors hover:text-neutral-900 ${
@@ -60,12 +61,20 @@ export function Navbar() {
     <>
       <header className="sticky top-0 z-40 border-b border-neutral-200 bg-white/90 backdrop-blur">
         <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          <Link
-            to="/"
-            onClick={close}
-            className="text-lg font-semibold tracking-tight text-neutral-900 no-underline"
-          >
-            Perfume<span className="text-neutral-400">Capsules</span>
+          <Link to="/" onClick={close} className="flex items-center">
+            <img
+              src={logo}
+              alt="Perfume Capsules"
+              className="h-8 md:h-10 w-auto object-contain"
+              style={{
+                mixBlendMode: 'multiply',
+                background: 'transparent',
+                border: 'none',
+                padding: 0,
+                borderRadius: 0,
+                boxShadow: 'none',
+              }}
+            />
           </Link>
 
           {/* Desktop */}
@@ -125,9 +134,19 @@ export function Navbar() {
           )}
         >
           <div className="flex items-center justify-between border-b border-neutral-100 px-5 py-4">
-            <span className="text-sm font-semibold text-neutral-900">
-              {isAuthenticated ? `Hi, ${user?.name}` : 'Menu'}
-            </span>
+            <img
+              src={logo}
+              alt="Perfume Capsules"
+              className="h-8 w-auto object-contain"
+              style={{
+                mixBlendMode: 'multiply',
+                background: 'transparent',
+                border: 'none',
+                padding: 0,
+                borderRadius: 0,
+                boxShadow: 'none',
+              }}
+            />
             <button type="button" onClick={close} aria-label="Close menu" className="text-neutral-500">
               <CloseIcon className="h-5 w-5" />
             </button>

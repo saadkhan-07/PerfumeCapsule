@@ -143,3 +143,30 @@ export interface CartItem {
   variant: ProductVariant
   quantity: number
 }
+
+/** Editable site-wide settings (singleton) returned by GET /api/settings. */
+export interface SiteSettings {
+  id: string
+  siteName: string
+  tagline: string | null
+  logoUrl: string | null
+  logoPublicId: string | null
+  faviconUrl: string | null
+  faviconPublicId: string | null
+  contactEmail: string | null
+  contactPhone: string | null
+  addressLine: string | null
+  city: string | null
+  instagramUrl: string | null
+  facebookUrl: string | null
+  tiktokUrl: string | null
+  currency: string
+  localCity: string
+  localShippingFee: string
+  outstationShippingFee: string
+  freeShippingThreshold: string | null
+  announcementBar: string | null
+  maintenanceMode: boolean
+  createdAt: string
+  updatedAt: string
+}

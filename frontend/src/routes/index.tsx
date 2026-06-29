@@ -21,6 +21,7 @@ import { AdminProductsPage } from '../pages/AdminProductsPage'
 import { AdminProductFormPage } from '../pages/AdminProductFormPage'
 import { AdminOrdersPage } from '../pages/AdminOrdersPage'
 import { AdminOrderDetailPage } from '../pages/AdminOrderDetailPage'
+import { AdminSettingsPage } from '../pages/AdminSettingsPage'
 import { NotFoundPage } from '../pages/NotFoundPage'
 
 /**
@@ -66,6 +67,7 @@ export const routes: RouteObject[] = [
               { path: 'admin/products/:id', element: <AdminProductFormPage /> },
               { path: 'admin/orders', element: <AdminOrdersPage /> },
               { path: 'admin/orders/:id', element: <AdminOrderDetailPage /> },
+              { path: 'admin/settings', element: <AdminSettingsPage /> },
             ],
           },
         ],
