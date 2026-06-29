@@ -34,3 +34,25 @@ export async function getProduct(id: string): Promise<Product> {
   const { data } = await api.get<ApiResponse<Product>>(`/products/${id}`)
   return data.data
 }
+
+export interface ProductInput {
+  name: string
+  description?: string
+  brandId: string
+  categoryIds: string[]
+  isActive?: boolean
+}
+
+export async function createProduct(input: ProductInput): Promise<Product> {
+  const { data } = await api.post<ApiResponse<Product>>('/products', input)
+  return data.data
+}
+
+export async function updateProduct(id: string, input: ProductInput): Promise<Product> {
+  const { data } = await api.put<ApiResponse<Product>>(`/products/${id}`, input)
+  return data.data
+}
+
+export async function deleteProduct(id: string): Promise<void> {
+  await api.delete(`/products/${id}`)
+}

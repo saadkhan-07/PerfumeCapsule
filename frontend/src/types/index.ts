@@ -94,9 +94,16 @@ export interface Product {
   brand?: Brand
   variants?: ProductVariant[]
   images?: ProductImage[]
-  categories?: Category[]
+  categories?: ProductCategoryLink[]
   createdAt: string
   updatedAt: string
+}
+
+/** Product↔Category join row as returned by the API (includes the nested category). */
+export interface ProductCategoryLink {
+  productId?: string
+  categoryId: string
+  category: Category
 }
 
 export interface OrderItem {

@@ -1,5 +1,6 @@
 import { createBrowserRouter, type RouteObject } from 'react-router-dom'
 import { RootLayout } from '../components/layout/RootLayout'
+import { AdminLayout } from '../components/layout/AdminLayout'
 import { ProtectedRoute } from './ProtectedRoute'
 import { AdminRoute } from './AdminRoute'
 
@@ -14,8 +15,12 @@ import { RegisterPage } from '../pages/RegisterPage'
 import { WishlistPage } from '../pages/WishlistPage'
 import { OrderHistoryPage } from '../pages/OrderHistoryPage'
 import { AdminDashboardPage } from '../pages/AdminDashboardPage'
+import { AdminBrandsPage } from '../pages/AdminBrandsPage'
+import { AdminCategoriesPage } from '../pages/AdminCategoriesPage'
 import { AdminProductsPage } from '../pages/AdminProductsPage'
+import { AdminProductFormPage } from '../pages/AdminProductFormPage'
 import { AdminOrdersPage } from '../pages/AdminOrdersPage'
+import { AdminOrderDetailPage } from '../pages/AdminOrderDetailPage'
 import { NotFoundPage } from '../pages/NotFoundPage'
 
 /**
@@ -46,13 +51,23 @@ export const routes: RouteObject[] = [
         ],
       },
 
-      // Admin (requires isAdmin)
+      // Admin (requires isAdmin) — all pages share the AdminLayout sidebar.
       {
         element: <AdminRoute />,
         children: [
-          { path: 'admin', element: <AdminDashboardPage /> },
-          { path: 'admin/products', element: <AdminProductsPage /> },
-          { path: 'admin/orders', element: <AdminOrdersPage /> },
+          {
+            element: <AdminLayout />,
+            children: [
+              { path: 'admin', element: <AdminDashboardPage /> },
+              { path: 'admin/brands', element: <AdminBrandsPage /> },
+              { path: 'admin/categories', element: <AdminCategoriesPage /> },
+              { path: 'admin/products', element: <AdminProductsPage /> },
+              { path: 'admin/products/new', element: <AdminProductFormPage /> },
+              { path: 'admin/products/:id', element: <AdminProductFormPage /> },
+              { path: 'admin/orders', element: <AdminOrdersPage /> },
+              { path: 'admin/orders/:id', element: <AdminOrderDetailPage /> },
+            ],
+          },
         ],
       },
 

@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { loginSchema, type LoginValues } from '../utils/validation'
-import { loginRequest } from '../services/auth.service'
+import { loginRequest, adminLoginRequest } from '../services/auth.service'
 import { useAuthStore } from '../store/authStore'
 import { getApiErrorMessage } from '../utils/apiError'
 import { PageWrapper } from '../components/layout/PageWrapper'
@@ -31,8 +31,15 @@ export function LoginPage() {
       const { user, token } = await loginRequest(values)
       login({ ...user, role: 'user' }, token)
       navigate(redirectTo, { replace: true })
-    } catch (error) {
-      setFormError(getApiErrorMessage(error, 'Invalid email or password'))
+    } catch (customerError) {
+      // Not a customer account — try the admin login before giving up.
+      try {
+        const { admin, token } = await adminLoginRequest(values)
+        login({ ...admin, phone: null, role: 'admin' }, token)
+        navigate('/admin', { replace: true })
+      } catch {
+        setFormError(getApiErrorMessage(customerError, 'Invalid email or password'))
+      }
     }
   })
 
