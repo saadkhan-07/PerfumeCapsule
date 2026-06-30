@@ -1,7 +1,12 @@
 @import 'tailwindcss';
 
-/* Phase 4 foundation: Tailwind only. The premium design system (theme tokens,
-   fonts) lands in Phase 7. Keep base styles minimal and unopinionated here. */
+/* Site-wide default typeface. Barlow (Google Fonts, free) is the closest open
+   match to DIN Pro's condensed, technical character. Setting --font-sans here
+   (Tailwind v4 CSS config — there is no tailwind.config.js) makes it the default
+   for `font-sans` AND the base body font, which everything inherits. */
+@theme {
+  --font-sans: 'Barlow', ui-sans-serif, system-ui, sans-serif;
+}
 
 html,
 body,

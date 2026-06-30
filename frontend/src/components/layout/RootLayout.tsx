@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { Outlet } from 'react-router-dom'
+import { AnnouncementBar } from './AnnouncementBar'
 import { Navbar } from './Navbar'
 import { Footer } from './Footer'
 import { useSettings } from '../../hooks/useSettings'
@@ -29,6 +30,7 @@ export function RootLayout() {
 
   return (
     <div className="flex min-h-screen flex-col overflow-x-hidden bg-neutral-50 text-neutral-900">
+      <AnnouncementBar />
       <Navbar />
       <main className="flex-1">
         <Outlet />

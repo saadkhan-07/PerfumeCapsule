@@ -48,12 +48,16 @@ export function Navbar() {
   const close = () => setMenuOpen(false)
   useBodyScrollLock(menuOpen)
 
+  // Both the desktop nav and the mobile drawer render from this single list, so
+  // adding here places the link in both, with identical styling + close behavior.
+  // Track Order is public (guests need it most), so it is not auth-gated.
   const links = [
     { to: '/', label: 'Home', end: true },
     { to: '/shop', label: 'Shop', end: false },
     ...(isAuthenticated && user?.role === 'user'
       ? [{ to: '/wishlist', label: 'Wishlist', end: false }]
       : []),
+    { to: '/track-order', label: 'Track Order', end: false },
     ...(user?.role === 'admin' ? [{ to: '/admin', label: 'Admin', end: false }] : []),
   ]
 

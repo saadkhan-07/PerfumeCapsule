@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { useBrands } from '../../hooks/useCatalog'
 
@@ -8,10 +9,49 @@ const SCROLLBAR_HIDDEN = '[-ms-overflow-style:none] [scrollbar-width:none] [&::-
 
 /**
  * A quiet logo/name strip of the brands we carry. Wraps and centers on desktop;
- * scrolls horizontally on mobile so every brand stays reachable by swipe.
+ * scrolls horizontally on mobile so every brand stays reachable by swipe. On
+ * mobile the strip opens scrolled so the centerpiece logo (Dior) is centered in
+ * the viewport, matching the desktop composition.
  */
 export function BrandStrip() {
   const { data: brands, isLoading } = useBrands()
+  const scrollRef = useRef<HTMLDivElement>(null)
+
+  // Center the strip on the Dior logo on mount (mobile only — on desktop the row
+  // wraps and isn't horizontally scrollable, so setting scrollLeft is a no-op).
+  // Matched by name (not index) so reordering brands later doesn't break it;
+  // falls back to the middle brand if there is no "Dior".
+  useEffect(() => {
+    const container = scrollRef.current
+    if (!container || !brands || brands.length === 0) return
+
+    const centerOnCenterpiece = () => {
+      let idx = brands.findIndex((b) => b.name.trim().toLowerCase() === 'dior')
+      if (idx === -1) idx = Math.floor(brands.length / 2)
+      const child = container.children[idx] as HTMLElement | undefined
+      if (!child) return
+      const containerRect = container.getBoundingClientRect()
+      const childRect = child.getBoundingClientRect()
+      // Child's center in the container's scroll coordinate space.
+      const childCenter = childRect.left - containerRect.left + container.scrollLeft + childRect.width / 2
+      container.scrollLeft = Math.max(0, childCenter - container.clientWidth / 2)
+    }
+
+    centerOnCenterpiece()
+
+    // Logo widths aren't known until the images load, which shifts positions —
+    // re-center once any still-loading logos finish.
+    const imgs = Array.from(container.querySelectorAll('img'))
+    const pending = imgs.filter((img) => !img.complete)
+    if (pending.length === 0) return
+    let remaining = pending.length
+    const onLoad = () => {
+      remaining -= 1
+      if (remaining <= 0) centerOnCenterpiece()
+    }
+    pending.forEach((img) => img.addEventListener('load', onLoad, { once: true }))
+    return () => pending.forEach((img) => img.removeEventListener('load', onLoad))
+  }, [brands])
 
   // Hide entirely while loading or when there are no brands — no empty box.
   if (isLoading || !brands || brands.length === 0) return null
@@ -22,7 +62,8 @@ export function BrandStrip() {
         <p className="text-center text-xs uppercase tracking-wide text-neutral-400">Brands we carry</p>
 
         <div
-          className={`mt-8 flex gap-x-12 overflow-x-auto md:flex-wrap md:justify-center ${SCROLLBAR_HIDDEN}`}
+          ref={scrollRef}
+          className={`mt-8 flex gap-x-12 gap-y-6 overflow-x-auto md:flex-wrap md:justify-center md:overflow-x-visible ${SCROLLBAR_HIDDEN}`}
         >
           {brands.map((brand) => (
             <Link
