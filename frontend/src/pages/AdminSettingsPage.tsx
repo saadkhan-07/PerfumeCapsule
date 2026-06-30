@@ -3,6 +3,7 @@ import type { ReactNode } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { getSettings, updateSettings, type SettingsFormValues } from '../services/settings.service'
 import { getApiErrorMessage } from '../utils/apiError'
+import { PAKISTAN_CITIES } from '../utils/pakistanCities'
 import { Button } from '../components/ui/Button'
 import { Input } from '../components/ui/Input'
 import { Skeleton } from '../components/ui/Skeleton'
@@ -167,7 +168,27 @@ export function AdminSettingsPage() {
 
       <Section title="Commerce & shipping">
         <Input label="Currency" value={form.currency} onChange={(e) => update('currency', e.target.value)} />
-        <Input label="Local city" value={form.localCity} onChange={(e) => update('localCity', e.target.value)} />
+        <div>
+          <label className="mb-1.5 block text-sm font-medium text-neutral-700">Inside city (local rate)</label>
+          <select
+            value={form.localCity}
+            onChange={(e) => update('localCity', e.target.value)}
+            className="h-11 w-full rounded-lg border border-neutral-300 bg-white px-3 text-sm text-neutral-900 focus:border-neutral-900 focus:outline-none focus:ring-2 focus:ring-neutral-900/10"
+          >
+            {/* Preserve a legacy value that isn't in the list so saving never silently changes it. */}
+            {form.localCity && !PAKISTAN_CITIES.includes(form.localCity) && (
+              <option value={form.localCity}>{form.localCity} (current)</option>
+            )}
+            {PAKISTAN_CITIES.map((c) => (
+              <option key={c} value={c}>
+                {c}
+              </option>
+            ))}
+          </select>
+          <p className="mt-1 text-xs text-neutral-500">
+            Orders to this city get the local rate; every other city is charged the outstation rate.
+          </p>
+        </div>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           <Input label="Local fee" type="number" value={form.localShippingFee} onChange={(e) => update('localShippingFee', e.target.value)} />
           <Input label="Outstation fee" type="number" value={form.outstationShippingFee} onChange={(e) => update('outstationShippingFee', e.target.value)} />

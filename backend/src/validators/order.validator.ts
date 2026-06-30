@@ -35,6 +35,13 @@ export const createOrderSchema = z.object({
   }),
 });
 
+export const lookupOrderSchema = z.object({
+  query: z.strictObject({
+    orderId: z.string().trim().min(1, 'Order ID is required'),
+    phone: z.string().trim().min(7, 'A valid phone number is required').max(20),
+  }),
+});
+
 export const updateOrderStatusSchema = z.object({
   params: z.strictObject({ id: z.string().min(1, 'Order id is required') }),
   body: z.strictObject({
@@ -43,4 +50,5 @@ export const updateOrderStatusSchema = z.object({
 });
 
 export type CreateOrderInput = z.infer<typeof createOrderSchema>['body'];
+export type LookupOrderInput = z.infer<typeof lookupOrderSchema>['query'];
 export type UpdateOrderStatusInput = z.infer<typeof updateOrderStatusSchema>['body'];

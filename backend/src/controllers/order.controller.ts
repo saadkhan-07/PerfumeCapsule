@@ -4,9 +4,16 @@ import { ApiError } from '../utils/ApiError';
 import { orderService } from '../services/order.service';
 
 export const createOrder = asyncHandler(async (req, res) => {
-  if (!req.auth) throw ApiError.unauthorized('Authentication required');
+  // Guest checkout: req.auth is undefined for guests (optionalAuth), in which
+  // case the order is saved with userId: null. Logged-in customers link to their
+  // User row. Required shipping fields are validated regardless of auth state.
   const order = await orderService.create(req.auth, req.body);
   sendSuccess(res, 201, 'Order placed successfully', order);
+});
+
+export const lookupOrder = asyncHandler(async (req, res) => {
+  const order = await orderService.lookup(req.query.orderId as string, req.query.phone as string);
+  sendSuccess(res, 200, 'Order retrieved', order);
 });
 
 export const listOrders = asyncHandler(async (_req, res) => {

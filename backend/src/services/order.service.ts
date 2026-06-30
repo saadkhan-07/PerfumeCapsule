@@ -16,7 +16,7 @@ export const orderService = {
    * NOTE: this does NOT open WhatsApp — the frontend builds the wa.me message from
    * the returned order and opens it after a confirmed save.
    */
-  async create(auth: AuthContext, input: CreateOrderInput) {
+  async create(auth: AuthContext | undefined, input: CreateOrderInput) {
     const requestedIds = input.items.map((i) => i.variantId);
     const variants = await orderRepository.findVariantsByIds(requestedIds);
     const variantById = new Map(variants.map((v) => [v.id, v]));
@@ -63,8 +63,9 @@ export const orderService = {
     const shippingFee = calculateShipping(subtotal, input.shippingInfo.city, settings);
     const total = subtotal.add(shippingFee);
 
-    // Only customers link to a User row (admin ids are not User FKs → guest-style).
-    const ownerConnect = auth.role === 'user' ? { user: { connect: { id: auth.id } } } : {};
+    // Only logged-in customers link to a User row. Guests (no auth) and admins
+    // (whose ids are not User FKs) produce an order with userId: null.
+    const ownerConnect = auth?.role === 'user' ? { user: { connect: { id: auth.id } } } : {};
 
     const orderData: Prisma.OrderCreateInput = {
       ...ownerConnect,
@@ -89,6 +90,19 @@ export const orderService = {
   /** The authenticated customer's own orders, newest first. */
   listMine(auth: AuthContext) {
     return orderRepository.findByUserId(auth.id);
+  },
+
+  /**
+   * Public guest order lookup: returns an order only when BOTH the id and the
+   * phone match. The phone is the security gate (there is no login), so a generic
+   * 404 is returned on any mismatch — never revealing which field was wrong.
+   */
+  async lookup(orderId: string, phone: string) {
+    const order = await orderRepository.findByIdAndPhone(orderId, phone.trim());
+    if (!order) {
+      throw ApiError.notFound('Order not found');
+    }
+    return order;
   },
 
   /** Admin or the order's owner may view a single order. */

@@ -115,6 +115,16 @@ export function AdminOrderDetailPage() {
               <div>{order.address}</div>
               <div>{order.city}</div>
               <div className="pt-2 text-xs text-neutral-400">Payment: {order.paymentMethod}</div>
+              <div className="text-xs text-neutral-400">
+                Account:{' '}
+                {order.userId ? (
+                  <span className="text-neutral-600">
+                    {order.user ? `${order.user.name} (${order.user.email})` : 'Registered'}
+                  </span>
+                ) : (
+                  <span className="font-medium text-neutral-500">Guest</span>
+                )}
+              </div>
             </dl>
           </div>
 

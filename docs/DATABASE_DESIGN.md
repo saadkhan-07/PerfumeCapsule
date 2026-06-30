@@ -77,7 +77,7 @@ var. Payment account details are intentionally excluded.
 | `localCity` | String | `@default("Lahore")` — destination matched (case/space-insensitive) for the local rate |
 | `localShippingFee` | Decimal | `Decimal(10,2)`, `@default(200)` |
 | `outstationShippingFee` | Decimal | `Decimal(10,2)`, `@default(400)` — used for any city other than `localCity` |
-| `freeShippingThreshold` | Decimal? | `Decimal(10,2)`, `@default(5000)` — subtotal strictly greater than this ships free |
+| `freeShippingThreshold` | Decimal? | `Decimal(10,2)`, `@default(5000)` — subtotal at or above this ships free (inclusive) |
 | `announcementBar` | String? | |
 | `maintenanceMode` | Boolean | `@default(false)` |
 | `createdAt` / `updatedAt` | DateTime | |
@@ -85,7 +85,7 @@ var. Payment account details are intentionally excluded.
 **Shipping rule** (resolved in `order.service` at checkout — backend-authoritative;
 the values are admin-editable but the rule is fixed in code):
 
-1. `subtotal > freeShippingThreshold` → **free** (0)
+1. `subtotal >= freeShippingThreshold` → **free** (0)
 2. destination `city` matches `localCity` (case/whitespace-insensitive) → `localShippingFee`
 3. otherwise → `outstationShippingFee`
 

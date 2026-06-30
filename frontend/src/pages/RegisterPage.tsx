@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { registerSchema, type RegisterValues } from '../utils/validation'
 import { registerRequest } from '../services/auth.service'
 import { useAuthStore } from '../store/authStore'
@@ -10,16 +10,34 @@ import { PageWrapper } from '../components/layout/PageWrapper'
 import { Input } from '../components/ui/Input'
 import { Button } from '../components/ui/Button'
 
+interface RegisterPrefill {
+  name?: string
+  phone?: string
+  email?: string
+}
+
 export function RegisterPage() {
   const navigate = useNavigate()
+  const location = useLocation()
   const login = useAuthStore((s) => s.login)
   const [formError, setFormError] = useState<string | null>(null)
+
+  // Prefill from a guest checkout's details when arriving from the confirmation prompt.
+  const prefill = (location.state as { prefill?: RegisterPrefill } | null)?.prefill
 
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<RegisterValues>({ resolver: zodResolver(registerSchema) })
+  } = useForm<RegisterValues>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: {
+      name: prefill?.name ?? '',
+      email: prefill?.email ?? '',
+      phone: prefill?.phone ?? '',
+      password: '',
+    },
+  })
 
   const onSubmit = handleSubmit(async (values) => {
     setFormError(null)

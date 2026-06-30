@@ -1,6 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { useCartStore, selectCartSubtotal } from '../store/cartStore'
-import { useAuthStore } from '../store/authStore'
 import { formatPKR } from '../utils/format'
 import { PageWrapper } from '../components/layout/PageWrapper'
 import { Button } from '../components/ui/Button'
@@ -13,15 +12,10 @@ export function CartPage() {
   const updateQuantity = useCartStore((s) => s.updateQuantity)
   const removeItem = useCartStore((s) => s.removeItem)
   const subtotal = useCartStore(selectCartSubtotal)
-  const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
 
-  const proceedToCheckout = () => {
-    if (!isAuthenticated) {
-      navigate('/login', { state: { from: '/checkout' } })
-      return
-    }
-    navigate('/checkout')
-  }
+  // Guests and logged-in users both go straight to checkout; the checkout page
+  // presents a guest-or-login choice when the visitor is unauthenticated.
+  const proceedToCheckout = () => navigate('/checkout')
 
   if (items.length === 0) {
     return (

@@ -133,6 +133,8 @@ export interface Order {
   total: string
   whatsappUrl: string | null
   items?: OrderItem[]
+  /** Non-sensitive owner info on admin endpoints; null for guest orders. */
+  user?: { id: string; name: string; email: string; phone: string | null } | null
   createdAt: string
   updatedAt: string
 }

@@ -18,11 +18,47 @@ export interface UploadResult {
 }
 
 /**
- * Uploads a local file to `perfume-capsules/{folder}` with a standard eager
- * transformation (800×800, fill, WebP/auto format, auto quality). Returns the
- * stored identifiers — persist BOTH publicId and url in the database.
+ * Eager transformation presets, one per image type (CLAUDE.md transformation
+ * table). `fill` crops to a square — correct for product imagery, but it would
+ * chop the sides off a wide brand wordmark, so logos use `fit` (whole logo,
+ * scaled down inside the box, never cropped).
  */
-export const uploadImage = async (filePath: string, folder: string): Promise<UploadResult> => {
+export type TransformPreset = 'product' | 'logo';
+
+const TRANSFORMS: Record<TransformPreset, { width: number; height: number; crop: string }> = {
+  product: { width: 800, height: 800, crop: 'fill' },
+  logo: { width: 400, height: 400, crop: 'fit' },
+};
+
+/**
+ * Builds the delivery URL for an already-stored asset using the given preset's
+ * transformation. Shared by uploads (so the saved URL matches the eager
+ * derivative) and by maintenance scripts that re-derive URLs for existing
+ * assets without re-uploading them.
+ */
+export const buildTransformedUrl = (
+  publicId: string,
+  preset: TransformPreset = 'product',
+): string => {
+  const t = TRANSFORMS[preset];
+  return cloudinary.url(publicId, {
+    ...t,
+    fetch_format: 'auto',
+    quality: 'auto',
+    secure: true,
+  });
+};
+
+/**
+ * Uploads a local file to `perfume-capsules/{folder}` with a standard eager
+ * transformation chosen by `preset` (WebP/auto format, auto quality). Returns
+ * the stored identifiers — persist BOTH publicId and url in the database.
+ */
+export const uploadImage = async (
+  filePath: string,
+  folder: string,
+  preset: TransformPreset = 'product',
+): Promise<UploadResult> => {
   if (!isCloudinaryConfigured) {
     throw new ApiError(503, 'Image storage is not configured');
   }
@@ -32,9 +68,7 @@ export const uploadImage = async (filePath: string, folder: string): Promise<Upl
     resource_type: 'image',
     eager: [
       {
-        width: 800,
-        height: 800,
-        crop: 'fill',
+        ...TRANSFORMS[preset],
         fetch_format: 'auto',
         quality: 'auto',
       },

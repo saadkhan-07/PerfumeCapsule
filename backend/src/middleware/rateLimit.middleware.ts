@@ -17,3 +17,20 @@ export const authRateLimiter = rateLimit({
     errors: null,
   },
 });
+
+/**
+ * Rate limiter for the public guest order-lookup endpoint. Since the only gate
+ * is phone + order id, this blunts brute-force enumeration attempts.
+ */
+export const orderLookupRateLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  limit: 10, // max lookups per window per IP
+  standardHeaders: 'draft-7',
+  legacyHeaders: false,
+  message: {
+    success: false,
+    message: 'Too many lookups. Please try again in a few minutes.',
+    data: null,
+    errors: null,
+  },
+});

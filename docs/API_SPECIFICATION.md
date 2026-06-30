@@ -302,13 +302,26 @@ Orders are saved by the backend before the frontend opens WhatsApp. The backend
 does **not** open/redirect to WhatsApp — the frontend builds the wa.me message
 from the returned order. (See note below on `whatsappUrl`.)
 
-### `POST /api/orders` — authenticated (any logged-in account)
+### `POST /api/orders` — optional auth (guest **or** logged-in)
+Uses the **`optionalAuth`** middleware so both guests and authenticated accounts
+can place orders:
+
+- **No `Authorization` header** → the order is saved as a **guest order**
+  (`userId: null`).
+- **Valid Bearer token** → the order links to that account (`userId` set for a
+  `user`; an `admin` token creates an unowned/guest-style order).
+- **Present but invalid/expired token** → `401` (a broken token is **not**
+  silently downgraded to a guest order).
+
+Required shipping fields (`shippingInfo.name/phone/address/city`) are validated
+**regardless of auth state**.
+
 Validates every variant exists and has sufficient stock, prices the order from
 current variant prices, **resolves shipping from `SiteSettings`** (see Settings),
 then atomically decrements stock and saves the order with item + money snapshots.
 
 **Shipping** is computed server-side: `subtotal` = Σ line totals; `shippingFee` is
-free when `subtotal > freeShippingThreshold`, else `localShippingFee` when
+free when `subtotal >= freeShippingThreshold`, else `localShippingFee` when
 `shippingInfo.city` matches `localCity` (case/whitespace-insensitive), else
 `outstationShippingFee`; `total = subtotal + shippingFee`. The client cannot
 override these — any price/shipping value it sends is ignored.
@@ -331,9 +344,6 @@ override these — any price/shipping value it sends is ignored.
 | `shippingInfo.city` | 2–100 |
 | `paymentMethod` | `JAZZCASH` or `EASYPAISA` |
 
-Orders placed by a `user` token link to that user; an `admin` token creates an
-unowned (guest-style) order.
-
 **`201`**
 ```json
 { "success": true, "message": "Order placed successfully",
@@ -348,6 +358,26 @@ unowned (guest-style) order.
 
 **Errors:** unknown `variantId` → `422` (with `errors[]`); insufficient stock →
 `409` with a human-readable message naming the product/size.
+
+### `GET /api/orders/lookup` — public (guest order tracking)
+Lets a guest retrieve their order without an account. Matched on **both** the
+order id **and** the phone number used at checkout — the phone is the security
+gate. **Rate limited:** 10 requests / 15 minutes per IP (`429` after).
+
+**Query params**
+
+| Param | Type | Rules |
+|---|---|---|
+| `orderId` | string | required |
+| `phone` | string | required, 7–20 chars |
+
+Returns the order **with `items`** (no `user` relation is exposed). Declared
+before `/:id` so `lookup` is not parsed as an order id.
+
+- **`200`** → the matching `Order` (same shape as the create response, `items` included).
+- **`404`** → generic `"Order not found"` on **any** mismatch. The response never
+  reveals whether the `orderId` or the `phone` was wrong (anti-enumeration).
+- **`422`** → missing/malformed query params.
 
 ### `GET /api/orders` — admin only
 All orders, newest first, each including `items` and a non-sensitive `user`

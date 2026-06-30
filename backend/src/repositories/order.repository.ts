@@ -34,6 +34,14 @@ export const orderRepository = {
   findById: (id: string) =>
     prisma.order.findUnique({ where: { id }, include: { items: true, user: userSelect } }),
 
+  /**
+   * Guest order lookup — matches on BOTH id and customerPhone. Excludes the
+   * `user` relation (a public, login-less endpoint should not surface account
+   * data). Returns null when either field doesn't match.
+   */
+  findByIdAndPhone: (id: string, phone: string) =>
+    prisma.order.findFirst({ where: { id, customerPhone: phone }, include: { items: true } }),
+
   updateStatus: (id: string, status: Order['status']) =>
     prisma.order.update({
       where: { id },

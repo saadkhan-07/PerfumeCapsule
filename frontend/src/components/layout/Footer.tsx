@@ -21,6 +21,9 @@ export function Footer() {
           <Link to="/cart" className="transition-colors hover:text-neutral-900">
             Cart
           </Link>
+          <Link to="/track-order" className="transition-colors hover:text-neutral-900">
+            Track your order
+          </Link>
           <Link to="/orders" className="transition-colors hover:text-neutral-900">
             Orders
           </Link>

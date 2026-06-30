@@ -109,9 +109,15 @@ export function AdminBrandsPage() {
                 <tr key={b.id}>
                   <td className="px-5 py-3">
                     {b.logoUrl ? (
-                      <img src={b.logoUrl} alt={b.name} className="h-10 w-10 rounded object-contain" />
+                      <div className="w-10 h-10 rounded-md bg-gray-100 flex items-center justify-center overflow-hidden p-1">
+                        <img
+                          src={b.logoUrl}
+                          alt={b.name}
+                          className="max-w-full max-h-full w-auto h-auto object-contain"
+                        />
+                      </div>
                     ) : (
-                      <div className="flex h-10 w-10 items-center justify-center rounded bg-neutral-100 text-xs text-neutral-400">
+                      <div className="flex w-10 h-10 items-center justify-center rounded-md bg-gray-100 text-xs text-neutral-400">
                         —
                       </div>
                     )}

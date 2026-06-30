@@ -10,6 +10,7 @@ import { ProductDetailPage } from '../pages/ProductDetailPage'
 import { CartPage } from '../pages/CartPage'
 import { CheckoutPage } from '../pages/CheckoutPage'
 import { OrderConfirmationPage } from '../pages/OrderConfirmationPage'
+import { TrackOrderPage } from '../pages/TrackOrderPage'
 import { LoginPage } from '../pages/LoginPage'
 import { RegisterPage } from '../pages/RegisterPage'
 import { WishlistPage } from '../pages/WishlistPage'
@@ -38,6 +39,11 @@ export const routes: RouteObject[] = [
       { path: 'shop', element: <CatalogPage /> },
       { path: 'shop/:productId', element: <ProductDetailPage /> },
       { path: 'cart', element: <CartPage /> },
+      // Checkout & confirmation are public to support guest checkout. The page
+      // itself offers a guest-or-login choice when the visitor is unauthenticated.
+      { path: 'checkout', element: <CheckoutPage /> },
+      { path: 'order-confirmation', element: <OrderConfirmationPage /> },
+      { path: 'track-order', element: <TrackOrderPage /> },
       { path: 'login', element: <LoginPage /> },
       { path: 'register', element: <RegisterPage /> },
 
@@ -45,8 +51,6 @@ export const routes: RouteObject[] = [
       {
         element: <ProtectedRoute />,
         children: [
-          { path: 'checkout', element: <CheckoutPage /> },
-          { path: 'order-confirmation', element: <OrderConfirmationPage /> },
           { path: 'wishlist', element: <WishlistPage /> },
           { path: 'orders', element: <OrderHistoryPage /> },
         ],

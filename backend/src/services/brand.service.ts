@@ -24,7 +24,7 @@ export const brandService = {
   async create(input: CreateBrandInput, logoPath?: string): Promise<Brand> {
     let logo: UploadResult | null = null;
     if (logoPath) {
-      logo = await uploadImage(logoPath, 'brands');
+      logo = await uploadImage(logoPath, 'brands', 'logo');
     }
 
     return brandRepository.create({
@@ -54,7 +54,7 @@ export const brandService = {
     }
 
     if (logoPath) {
-      const logo = await uploadImage(logoPath, 'brands');
+      const logo = await uploadImage(logoPath, 'brands', 'logo');
       data.logoUrl = logo.url;
       data.logoPublicId = logo.publicId;
       // Remove the previous asset only after the new one is safely stored.

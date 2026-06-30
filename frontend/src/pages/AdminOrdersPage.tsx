@@ -47,7 +47,14 @@ export function AdminOrdersPage() {
                   <td className="px-5 py-3 font-medium text-neutral-900">
                     #{o.id.slice(-8).toUpperCase()}
                   </td>
-                  <td className="px-5 py-3 text-neutral-700">{o.customerName}</td>
+                  <td className="px-5 py-3 text-neutral-700">
+                    {o.customerName}
+                    {!o.userId && (
+                      <span className="ml-2 rounded-full bg-neutral-100 px-2 py-0.5 text-xs font-medium text-neutral-500">
+                        Guest
+                      </span>
+                    )}
+                  </td>
                   <td className="px-5 py-3 text-neutral-600">{o.city}</td>
                   <td className="px-5 py-3 text-neutral-600">{o.items?.length ?? 0}</td>
                   <td className="px-5 py-3 text-neutral-900">{formatPKR(o.total)}</td>

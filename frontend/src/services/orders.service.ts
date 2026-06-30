@@ -12,6 +12,14 @@ export async function createOrder(payload: CreateOrderPayload): Promise<Order> {
   return data.data
 }
 
+/** Public guest order tracking — matched by order id + phone (no auth). */
+export async function lookupOrder(orderId: string, phone: string): Promise<Order> {
+  const { data } = await api.get<ApiResponse<Order>>('/orders/lookup', {
+    params: { orderId, phone },
+  })
+  return data.data
+}
+
 /** The current customer's own orders, newest first. */
 export async function getMyOrders(): Promise<Order[]> {
   const { data } = await api.get<ApiResponse<Order[]>>('/orders/mine')
