@@ -77,7 +77,13 @@ export function BrandStrip() {
                   src={brand.logoUrl}
                   alt={brand.name}
                   className="h-full w-auto object-contain"
-                  style={{ mixBlendMode: 'multiply' }}
+                  style={{
+                    mixBlendMode: 'multiply',
+                    // Afnan's logo is white (invisible on the light strip) — force it
+                    // to black. brightness(0) blacks out every pixel regardless of
+                    // colour; all other logos keep their natural colours ('none').
+                    filter: brand.name.toLowerCase() === 'afnan' ? 'brightness(0)' : 'none',
+                  }}
                 />
               ) : (
                 <span className="whitespace-nowrap text-sm font-medium text-neutral-500 transition-colors hover:text-neutral-900">
