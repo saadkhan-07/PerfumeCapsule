@@ -114,6 +114,13 @@ export function AdminBrandsPage() {
                           src={b.logoUrl}
                           alt={b.name}
                           className="max-w-full max-h-full w-auto h-auto object-contain"
+                          style={{
+                            mixBlendMode: 'multiply',
+                            // Afnan's logo is white (invisible on the light box) — force it
+                            // black, matching the homepage BrandStrip. Other logos keep
+                            // their natural colours.
+                            filter: b.name.toLowerCase() === 'afnan' ? 'brightness(0)' : 'none',
+                          }}
                         />
                       </div>
                     ) : (

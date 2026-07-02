@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { loginRequest } from '../../services/auth.service'
 import { useAuthStore } from '../../store/authStore'
 import { getApiErrorMessage } from '../../utils/apiError'
@@ -64,6 +65,11 @@ export function InlineSignIn({ onSuccess }: { onSuccess: () => void }) {
             }
           }}
         />
+        <div className="flex justify-end">
+          <Link to="/forgot-password" className="text-sm text-gray-500 transition-colors hover:text-black">
+            Forgot password?
+          </Link>
+        </div>
         <Button type="button" fullWidth isLoading={submitting} onClick={handleLogin}>
           Log in
         </Button>

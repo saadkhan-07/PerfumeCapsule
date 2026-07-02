@@ -72,7 +72,9 @@ Liveness probe (not under `/api`). Returns `200` with uptime.
 ## Auth
 
 > Rate limited: `/auth/register`, `/auth/login`, `/auth/admin/login` allow **10
-> requests per 15 minutes per IP**, after which they return `429`.
+> requests per 15 minutes per IP**; `/auth/forgot-password` and
+> `/auth/reset-password` allow **3 requests per 15 minutes per IP**. All return
+> `429` once the limit is exceeded.
 
 ### `POST /api/auth/register`
 Creates a customer account and returns a token.
@@ -104,6 +106,58 @@ Authenticates a customer. Invalid credentials return `401` with the generic mess
 ### `POST /api/auth/admin/login`
 Authenticates the admin account. Same body/behavior as login; the returned token has
 `role: "admin"`. Response `data` contains `{ admin, token }`.
+
+### `POST /api/auth/forgot-password`
+Starts a **customer** password reset. **Public.** Rate limited: **3 requests per 15
+minutes per IP** (`429` after).
+
+Queries the `User` table **only** — admins are fully excluded, so an admin's (or any
+non-existent) email is treated identically to an unknown one. To prevent email
+enumeration, the response is **always** the same regardless of whether the email is
+registered, and email delivery happens out-of-band (a send failure does not change
+the response).
+
+**Body:** `{ "email": string }` (valid email; unexpected fields → `422`).
+
+**`200`** (identical in all cases)
+```json
+{ "success": true,
+  "message": "If an account exists with this email, a reset link has been sent.",
+  "data": null, "errors": null }
+```
+
+When the email belongs to a real customer: a cryptographically random token is
+generated, **only its SHA-256 hash** is stored (`expiresAt` = now + 15 min), any
+previous unused tokens for that user are deleted, and an email is sent with the link
+`${FRONTEND_URL}/reset-password?token=<raw token>`. The raw token never appears in
+the database or in any log.
+
+### `POST /api/auth/reset-password`
+Completes a password reset. **Public.** Rate limited: **3 requests per 15 minutes per
+IP** (`429` after).
+
+**Body**
+| Field | Type | Rules |
+|---|---|---|
+| `token` | string | required (raw token from the emailed link) |
+| `newPassword` | string | same rules as registration (8–72 chars) |
+
+The token is SHA-256 hashed and looked up. If it is not found, expired, or already
+used, the endpoint returns a single generic **`400`**:
+```json
+{ "success": false, "message": "This reset link is invalid or has expired",
+  "data": null, "errors": null }
+```
+On success the new password is bcrypt-hashed and saved, the token is marked used, and
+the user's other outstanding tokens are deleted. The user is **not** auto-logged-in —
+they sign in manually with the new password.
+
+**`200`**
+```json
+{ "success": true, "message": "Your password has been reset. You can now log in.",
+  "data": null, "errors": null }
+```
+Validation failure (missing token / weak password) → `422`.
 
 ### `GET /api/auth/me`
 Returns the account behind the supplied token. **Requires** `Authorization: Bearer`.

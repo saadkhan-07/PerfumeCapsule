@@ -49,14 +49,35 @@ model User {
   phone    String?
 
   // Relations
-  wishlist Wishlist[]
-  reviews  Review[]
-  orders   Order[]
+  wishlist            Wishlist[]
+  reviews             Review[]
+  orders              Order[]
+  passwordResetTokens PasswordResetToken[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([email])
+}
+
+// ---------------------------------------------------------------------------
+// Password reset tokens (customer accounts only — NOT admins)
+//
+// A separate table (rather than fields on User) so a reset link can be
+// invalidated and cleaned up independently. Only the SHA-256 HASH of the token
+// is stored — the raw token exists solely in the emailed link, never at rest.
+// ---------------------------------------------------------------------------
+
+model PasswordResetToken {
+  id        String    @id @default(cuid())
+  tokenHash String    @unique // SHA-256 hash of the token (raw token never stored)
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([userId])
 }
 
 model Admin {

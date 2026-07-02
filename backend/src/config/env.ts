@@ -23,6 +23,14 @@ const envSchema = z.object({
   CLOUDINARY_CLOUD_NAME: z.string().optional(),
   CLOUDINARY_API_KEY: z.string().optional(),
   CLOUDINARY_API_SECRET: z.string().optional(),
+
+  // Frontend origin — used to build absolute links (e.g. the password reset URL).
+  FRONTEND_URL: z.string().url().default('http://localhost:5173'),
+
+  // Email (Resend). Optional so the app still boots without it, but password
+  // reset emails will fail to send (logged server-side) until configured.
+  RESEND_API_KEY: z.string().optional(),
+  EMAIL_FROM: z.string().default('onboarding@resend.dev'),
 });
 
 const parsed = envSchema.safeParse(process.env);

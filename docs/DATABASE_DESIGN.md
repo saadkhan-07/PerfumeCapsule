@@ -99,8 +99,31 @@ the values are admin-editable but the rule is fixed in code):
 | `phone` | String? | |
 | `createdAt` / `updatedAt` | DateTime | |
 
-**Relations:** `wishlist` → Wishlist[], `reviews` → Review[], `orders` → Order[].
+**Relations:** `wishlist` → Wishlist[], `reviews` → Review[], `orders` → Order[],
+`passwordResetTokens` → PasswordResetToken[].
 **Indexes:** `email`.
+
+### PasswordResetToken
+Short-lived, single-use tokens for the **customer** password-reset flow. Admins are
+**excluded** — the forgot-password endpoint queries the `User` table only, so no
+`Admin` reset token is ever created. A separate table (rather than fields on `User`)
+allows independent invalidation and cleanup. **Only the SHA-256 hash of the token is
+stored** — the raw token exists solely in the emailed link, never at rest.
+
+| Field | Type | Notes |
+|---|---|---|
+| `id` | String | PK, cuid |
+| `tokenHash` | String | `@unique` — SHA-256 hash of the raw token |
+| `userId` | String | FK → User, `onDelete: Cascade` |
+| `expiresAt` | DateTime | now + 15 minutes at creation |
+| `usedAt` | DateTime? | set when the token is consumed; a used token is rejected |
+| `createdAt` | DateTime | `@default(now())` |
+
+**Relations:** `user` → User. **Indexes:** `userId`.
+**Lifecycle:** requesting a reset deletes the user's prior *unused* tokens (only the
+newest link works); completing a reset marks the token `usedAt` and deletes the
+user's other outstanding tokens. This model has **no** `updatedAt` (append/consume
+only).
 
 ### Admin
 Single admin account in the current version.
@@ -270,6 +293,7 @@ history.
 
 | Relation | onDelete |
 |---|---|
+| PasswordResetToken → User | `Cascade` (tokens die with the account) |
 | Product → Brand | `Restrict` (can't delete a brand with products) |
 | ProductVariant → Product | `Cascade` |
 | ProductImage → Product | `Cascade` |
@@ -285,4 +309,6 @@ history.
 ## Migrations
 
 - Initial migration: `prisma migrate dev --name init` (creates all tables above).
+- `add_password_reset_token` — adds the `PasswordResetToken` table for the customer
+  forgot-password flow.
 - Migrations live in `backend/prisma/migrations/` and **are committed** to git.

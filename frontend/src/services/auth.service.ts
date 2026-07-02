@@ -33,3 +33,17 @@ export async function registerRequest(values: RegisterValues): Promise<AuthResul
   const { data } = await api.post<ApiResponse<AuthResult>>('/auth/register', payload)
   return data.data
 }
+
+/**
+ * Request a password reset link. The backend always responds 200 with the same
+ * generic message whether or not the email is registered (anti-enumeration), so
+ * this resolves without indicating whether an account was found.
+ */
+export async function forgotPasswordRequest(email: string): Promise<void> {
+  await api.post<ApiResponse<null>>('/auth/forgot-password', { email })
+}
+
+/** Complete a password reset with the emailed token and a new password. */
+export async function resetPasswordRequest(token: string, newPassword: string): Promise<void> {
+  await api.post<ApiResponse<null>>('/auth/reset-password', { token, newPassword })
+}

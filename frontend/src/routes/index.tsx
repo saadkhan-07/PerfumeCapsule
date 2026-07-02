@@ -13,6 +13,8 @@ import { OrderConfirmationPage } from '../pages/OrderConfirmationPage'
 import { TrackOrderPage } from '../pages/TrackOrderPage'
 import { LoginPage } from '../pages/LoginPage'
 import { RegisterPage } from '../pages/RegisterPage'
+import { ForgotPasswordPage } from '../pages/ForgotPasswordPage'
+import { ResetPasswordPage } from '../pages/ResetPasswordPage'
 import { WishlistPage } from '../pages/WishlistPage'
 import { OrderHistoryPage } from '../pages/OrderHistoryPage'
 import { AdminDashboardPage } from '../pages/AdminDashboardPage'
@@ -46,6 +48,9 @@ export const routes: RouteObject[] = [
       { path: 'track-order', element: <TrackOrderPage /> },
       { path: 'login', element: <LoginPage /> },
       { path: 'register', element: <RegisterPage /> },
+      // Password reset — public, no auth guard.
+      { path: 'forgot-password', element: <ForgotPasswordPage /> },
+      { path: 'reset-password', element: <ResetPasswordPage /> },
 
       // Protected (requires login)
       {

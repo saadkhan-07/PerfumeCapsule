@@ -34,5 +34,22 @@ export const loginSchema = z.object({
   }),
 });
 
+// Request a reset link. Only an email is accepted.
+export const forgotPasswordSchema = z.object({
+  body: z.strictObject({
+    email: emailField,
+  }),
+});
+
+// Consume a reset link. `newPassword` reuses the exact registration rules.
+export const resetPasswordSchema = z.object({
+  body: z.strictObject({
+    token: z.string().min(1, 'Reset token is required'),
+    newPassword: passwordField,
+  }),
+});
+
 export type RegisterInput = z.infer<typeof registerSchema>['body'];
 export type LoginInput = z.infer<typeof loginSchema>['body'];
+export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>['body'];
+export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>['body'];

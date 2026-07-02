@@ -23,6 +23,13 @@ export const emailField = z
   .min(1, 'Email is required')
   .pipe(z.email('Enter a valid email address'))
 
+/** Shared password rule — reused by registration and password reset so the
+ *  live validation UX is identical across both forms. */
+export const passwordField = z
+  .string()
+  .min(8, 'Password must be at least 8 characters')
+  .max(72)
+
 // ── Auth schemas ──────────────────────────────────────────────────────────
 export const loginSchema = z.object({
   email: emailField,
@@ -39,8 +46,23 @@ export const registerSchema = z.object({
     .refine((v) => !v || PK_PHONE.test(normalizePhone(v)), {
       message: 'Enter a valid Pakistani mobile number (e.g. 03001234567)',
     }),
-  password: z.string().min(8, 'Password must be at least 8 characters').max(72),
+  password: passwordField,
 })
+
+// ── Password reset schemas ──────────────────────────────────────────────────
+export const forgotPasswordSchema = z.object({
+  email: emailField,
+})
+
+export const resetPasswordSchema = z
+  .object({
+    newPassword: passwordField,
+    confirmPassword: z.string().min(1, 'Please confirm your password'),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: 'Passwords do not match',
+    path: ['confirmPassword'],
+  })
 
 // ── Single-page checkout schema ─────────────────────────────────────────────
 // First/last name are combined into `customerName` at submit time to match the
@@ -66,5 +88,7 @@ export const trackOrderSchema = z.object({
 
 export type LoginValues = z.infer<typeof loginSchema>
 export type RegisterValues = z.infer<typeof registerSchema>
+export type ForgotPasswordValues = z.infer<typeof forgotPasswordSchema>
+export type ResetPasswordValues = z.infer<typeof resetPasswordSchema>
 export type CheckoutValues = z.infer<typeof checkoutSchema>
 export type TrackOrderValues = z.infer<typeof trackOrderSchema>
