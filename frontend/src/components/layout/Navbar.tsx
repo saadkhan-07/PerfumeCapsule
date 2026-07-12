@@ -64,12 +64,12 @@ export function Navbar() {
   return (
     <>
       <header className="sticky top-0 z-40 border-b border-neutral-200 bg-white/90 backdrop-blur">
-        <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+        <nav className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           <Link to="/" onClick={close} className="flex items-center">
             <img
               src={logo}
               alt="Perfume Capsules"
-              className="h-8 md:h-10 w-auto object-contain"
+              className="h-12 md:h-16 w-auto object-contain"
               style={{
                 mixBlendMode: 'multiply',
                 background: 'transparent',
@@ -141,7 +141,7 @@ export function Navbar() {
             <img
               src={logo}
               alt="Perfume Capsules"
-              className="h-8 w-auto object-contain"
+              className="h-12 w-auto object-contain"
               style={{
                 mixBlendMode: 'multiply',
                 background: 'transparent',

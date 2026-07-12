@@ -1,34 +1,34 @@
-import { Link } from 'react-router-dom'
-import { PageWrapper } from '../components/layout/PageWrapper'
-import { Button } from '../components/ui/Button'
 import { FeaturedProducts } from '../features/home/FeaturedProducts'
 import { HowItWorks } from '../features/home/HowItWorks'
 import { BrandStrip } from '../features/home/BrandStrip'
 import { EditorialBanner } from '../features/home/EditorialBanner'
+import heroBanner from '../assets/hero-banner.png'
 
 export function HomePage() {
   return (
     <>
-      {/* Hero — existing, unchanged. */}
-      <PageWrapper>
-        <section className="flex flex-col items-center py-16 text-center sm:py-24">
-          <span className="rounded-full border border-neutral-200 px-3 py-1 text-xs font-medium uppercase tracking-wide text-neutral-500">
-            Authentic branded decants
-          </span>
-          <h1 className="mt-6 max-w-2xl text-4xl font-semibold tracking-tight text-neutral-900 sm:text-5xl">
-            Discover your signature scent, one capsule at a time.
-          </h1>
-          <p className="mt-4 max-w-xl text-base text-neutral-500">
-            Premium perfume decants in 5ml, 10ml and 30ml — try luxury fragrances without
-            committing to a full bottle.
-          </p>
-          <div className="mt-8 flex gap-3">
-            <Link to="/shop">
-              <Button size="lg">Shop the collection</Button>
-            </Link>
-          </div>
-        </section>
-      </PageWrapper>
+      {/* Hero — two cleanly separated rendering paths sharing one image import. */}
+
+      {/* MOBILE (below lg): tall, immersive image hero, image only. Height is 48vh
+          (not 75vh): at 75vh object-cover only reveals ~33% of this 1.85:1 image
+          and clips the outer bottles; 48vh is the tallest crop that keeps all
+          three bottles fully in frame (verified against the source). */}
+      <section className="relative h-[48vh] w-full overflow-hidden lg:hidden">
+        <img
+          src={heroBanner}
+          alt="Perfume bottles on black marble"
+          className="absolute inset-0 h-full w-full object-cover object-[50%_center]"
+        />
+      </section>
+
+      {/* DESKTOP (lg and up): unchanged — fixed 85vh with object-cover, no overlay. */}
+      <section className="relative hidden h-[85vh] w-full overflow-hidden lg:block">
+        <img
+          src={heroBanner}
+          alt="Perfume bottles on black marble"
+          className="absolute inset-0 h-full w-full object-cover object-center"
+        />
+      </section>
 
       {/* New sections below the hero. Footer is rendered by RootLayout. */}
       <FeaturedProducts />

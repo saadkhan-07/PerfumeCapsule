@@ -59,7 +59,7 @@ export function Footer() {
               <img
                 src={logo}
                 alt={siteName}
-                className="h-8 w-auto object-contain"
+                className="h-12 md:h-16 w-auto object-contain"
                 style={{
                   mixBlendMode: 'multiply',
                   background: 'transparent',

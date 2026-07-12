@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react'
 import { cn } from '../../utils/cn'
 import slide1 from '../../assets/Hero1(Valentino).jpg'
 import slide2 from '../../assets/Hero2(Tomford).jpg'
-import slide3 from '../../assets/Hero3.jpg'
 import slide4 from '../../assets/sauvage elixir Hero image.jpg'
+import slide5 from '../../assets/hero5.jpg'
 
 /**
  * Auto-sliding editorial carousel — crossfades (opacity) between three product
@@ -57,17 +57,6 @@ const slides = [
     desktopPosition: 'object-[center_64%]',
   },
   {
-    image: slide3,
-    label: 'THE EXPERIENCE',
-    heading: 'Try first. Commit later.',
-    gradient: 'from-black/60 via-black/10 to-transparent',
-    // Tall flat-lay: labels (YSL, "9 pm") sit upper-middle → bias the crop up.
-    position: 'md:object-[center_42%]',
-    // Flat-lay of laid-down bottles (no upright base): center bottom would crop
-    // off the top bottle + labels, so this slide composes better centered.
-    desktopPosition: 'object-center',
-  },
-  {
     image: slide4,
     label: 'THE SIGNATURE',
     heading: 'Icons, by the decant.',
@@ -78,6 +67,15 @@ const slides = [
     // Tall panel crops vertically: bias below center so the Sauvage bottle +
     // label stay framed rather than empty bedding up top.
     desktopPosition: 'object-[center_58%]',
+  },
+  {
+    image: slide5,
+    label: 'THE EDIT',
+    heading: 'Fragrance, distilled.',
+    gradient: 'from-black/70 via-black/20 to-transparent',
+    // Safe default center crop; tune once the exact composition is reviewed.
+    position: 'md:object-center',
+    desktopPosition: 'object-center',
   },
 ]
 
